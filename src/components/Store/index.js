@@ -1,23 +1,53 @@
-// Here we need to first import createStore
-import { createStore } from "redux";
+import { createSlice, configureStore } from "@reduxjs/toolkit";
 
-// This is reducer function who change the state of central store
-const counterReducer = (state = { counter: 0 }, action) => {
-  if (action.type === "increment") {
-    // Increment the counter by 2 when "increment" action is dispatched
-    return {
-      counter: state.counter + 5,
-    };
-  }
-  if (action.type === "decrement") {
-    return {
-      counter: state.counter - 5,
-    };
-  }
-  return state;
+// Initial State for counter
+const initialCounterState = { counter: 0, showCounter: true };
+
+// CreateSlice for counter
+const counterSlice = createSlice({
+  name: "counter",
+  initialState: initialCounterState,
+  reducers: {
+    increment(state) {
+      state.counter++;
+    },
+    decrement(state) {
+      state.counter--;
+    },
+    increase(state, action) {
+      state.counter = state.counter + action.payload;
+    },
+    toggleCounter(state) {
+      state.showCounter = !state.showCounter;
+    },
+  },
+});
+
+// Initial state for Authentication
+const initialAuthState = {
+  isAuthenticated: false,
 };
 
-// Create the store by passing the counterReducer function
-const store = createStore(counterReducer);
+// CreateSlice for Authentication
+const authSlice = createSlice({
+  name: "authentication",
+  initialState: initialAuthState,
+  reducers: {
+    login(state) {
+      state.isAuthenticated = true;
+    },
+    logout(state) {
+      state.isAuthenticated = false;
+    },
+  },
+});
+
+//  While working with multiple silices we have only one REDUX STORE
+const store = configureStore({
+  reducer: { counter: counterSlice.reducer, auth: authSlice.reducer },
+});
+
+export const counterActions = counterSlice.actions;
+export const authActions = authSlice.actions;
 
 export default store;
